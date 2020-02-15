@@ -1,0 +1,2 @@
+# SoicalEventRecommendation
+SoicalEventRecommendation partial
