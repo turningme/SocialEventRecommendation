@@ -45,7 +45,6 @@ public class EventMigration {
     }
 
 
-
     public int loadUserProfileHashMap(String UIfname) {
         File fileDescriptor = new File(UIfname);
         if (!fileDescriptor.exists()) {
@@ -74,7 +73,7 @@ public class EventMigration {
                     }
 
                     int i = 0;
-                    while (i < length ) {
+                    while (i < length) {
 
                         if ("<USERID>".equals(tokens.get(i))) {
                             i++;
@@ -278,7 +277,7 @@ public class EventMigration {
 
 
     //load user history events
-    public  List<SocialEvent> BulkLoadUserHistoryEventsForSpark(String userflist) {
+    public List<SocialEvent> BulkLoadUserHistoryEventsForSpark(String userflist) {
         List<SocialEvent> result = new ArrayList<>();
         String base = "/Users/jpliu/CLionProjects/EventRecoHelper/VirtualHisEventPath/";
         String contentPath = "%s/%s%s";
@@ -322,7 +321,7 @@ public class EventMigration {
     }
 
 
-    public  List<SocialEvent> LoadUserHistoryEventsForSpark(String UEventfname, int userId) {
+    public List<SocialEvent> LoadUserHistoryEventsForSpark(String UEventfname, int userId) {
         List<SocialEvent> elist = new ArrayList<>();
         File fileDescriptor = new File(UEventfname);
         if (!fileDescriptor.exists()) {
@@ -411,7 +410,7 @@ public class EventMigration {
                             int j = 0;
                             i++;
                             while (!"</msgcontfidf>".equals(tokens.get(i))) {
-                                vec[j] = (float) Float.parseFloat(tokens.get(i));
+                                vec[j] = Float.parseFloat(tokens.get(i));
                                 i++;
                                 j++;
                             }
@@ -455,7 +454,7 @@ public class EventMigration {
                             isMSG = 1;
                             i++;
                             while (!"</timestamp_ms>".equals(tokens.get(i))) {
-                                newTR.TimeStampCentre = Float.parseFloat(tokens.get(i).substring(5, 5+5)) / 60;
+                                newTR.TimeStampCentre = Float.parseFloat(tokens.get(i).substring(5, 5 + 5)) / 60;
                                 newTR.range = TIMERADIUST;
                                 i++;
                             }
@@ -477,7 +476,7 @@ public class EventMigration {
                                         break;
                                 }
 
-                                if (kk < euids.size()) {
+                                if (euids.size() > 0 && kk < euids.size()) {
                                     euids.get(kk).frequency++;
                                 } else {
                                     eufPair.frequency = 1;
@@ -488,9 +487,6 @@ public class EventMigration {
                             i++;
                             continue;
                         }
-
-
-                        i++;
 
                     }
 
@@ -537,10 +533,6 @@ public class EventMigration {
         return elist;
 
     }
-
-
-
-
 
 
     void loadMessageSlotForTraining(String FullSlotFileName, List<SocialMSG> HashTagedMSGlist,
@@ -609,8 +601,6 @@ public class EventMigration {
                         }
 
 
-
-
                         if ("<msgcontfidf>".equals(tokens.get(i))) {
                             int j = 0;
                             i++;
@@ -624,7 +614,6 @@ public class EventMigration {
                         }
 
 
-
                         if ("<msgid>".equals(tokens.get(i))) {
                             i++;
                             while (!"</msgid>".equals(tokens.get(i))) {
@@ -636,7 +625,6 @@ public class EventMigration {
                         }
 
 
-
                         if ("<coordinates>".equals(tokens.get(i))) {
                             i++;
                             int j = 0;
@@ -645,7 +633,7 @@ public class EventMigration {
                                     newSR.lat = Float.parseFloat(tokens.get(i));
                                     j++;
                                 } else {
-                                    newSR.longi =  Float.parseFloat(tokens.get(i));
+                                    newSR.longi = Float.parseFloat(tokens.get(i));
                                 }
                                 i++;
                             }
@@ -655,11 +643,10 @@ public class EventMigration {
                         }
 
 
-
                         if ("<timestamp_ms>".equals(tokens.get(i))) {
                             i++;
                             while (!"</timestamp_ms>".equals(tokens.get(i))) {
-                                newTR.TimeStampCentre =  Float.parseFloat(tokens.get(i).substring(5,5+5)) /
+                                newTR.TimeStampCentre = Float.parseFloat(tokens.get(i).substring(5, 5 + 5)) /
                                         60; //(float)atof(strtok.token(i).substr(4,10).c_str())/60;  //we use minutes not ms
                                 newTR.range = TIMERADIUST;
                                 i++;
@@ -669,9 +656,8 @@ public class EventMigration {
                         }
 
 
-
                         if ("<useridlist>".equals(tokens.get(i))) {
-                            isMSG = 1;
+
                             i++;
                             while (!"</useridlist>".equals(tokens.get(i))) {
                                 EUserFrePair eufPair = new EUserFrePair();
@@ -699,39 +685,37 @@ public class EventMigration {
 
                     }
 
+                    SocialMSG newsocialmsg = new SocialMSG(vec, newTR, newSR, euids);
+                    newsocialmsg.setMSGID(msgno);
+                    msgno++;
+                    if (hflag) {
+                        newsocialmsg.hashtaged = 1;
+                        HashTagedMSGlist.add(newsocialmsg);
+                    } else {
+                        newsocialmsg.hashtaged = 0;
+                        NonHashTagedMSGlist.add(newsocialmsg);
+                    }
 
-
+                    //deallocate and reset
+                    hflag = false;
+                    for (int k = 0; k < TFIDF_DIM; k++) {
+                        vec[k] = 0.0f;
+                    }
+                    newTR.TimeStampCentre = 0.0f;
+                    newSR.lat = 0.0f;
+                    newSR.longi = 0.0f;
+                    euids.clear();
+                    ////////////////////////////
                 }//read end
 
-                SocialMSG newsocialmsg = new SocialMSG(vec, newTR, newSR, euids);
-                newsocialmsg.setMSGID(msgno);
-                msgno++;
-                if (hflag) {
-                    newsocialmsg.hashtaged = 1;
-                    HashTagedMSGlist.add(newsocialmsg);
-                } else {
-                    newsocialmsg.hashtaged = 0;
-                    NonHashTagedMSGlist.add(newsocialmsg);
-                }
-
-                //deallocate and reset
-                hflag = false;
-                for (int i =0 ; i< TFIDF_DIM ; i++){
-                    vec[i] = 0.0f;
-                }
-                newTR.TimeStampCentre = 0.0f;
-                newSR.lat = 0.0f;
-                newSR.longi = 0.0f;
-                euids.clear();
-                ////////////////////////////
 
 
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 //log4j is needed
                 e.printStackTrace();
 
-            }finally {
+            } finally {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
@@ -741,15 +725,12 @@ public class EventMigration {
         }
 
 
-
     }
-
 
 
     /////
     //compute the relevance probability of seFirst and seMigrate
-    public float  EventMigrationProb(SocialEvent seFirst, SocialEvent  seMigrate)
-    {
+    public float EventMigrationProb(SocialEvent seFirst, SocialEvent seMigrate) {
         float Probr = 0; //if seMigrate is the migration of social event seFirst, then ret=1, otherwise ret=0;
 
         int sfit = 0;
@@ -758,16 +739,17 @@ public class EventMigration {
         int seFirstULen = seFirst.GetEventUserIDs().size();
         int migrateULen = seMigrate.GetEventUserIDs().size();
 
-        while (sfit!=sfitend) {
+        while (sfit != sfitend) {
             //if((*sfit).userid)  //value is not 0
             {
-                int  sefit = 0;
-                int  sefitend = seMigrate.GetEventUserIDs().size();
+                int sefit = 0;
+                int sefitend = seMigrate.GetEventUserIDs().size();
 
                 while (sefit != sefitend) {
                     //if ((*sefit).userid)
                     {
-                        Probr+=GetUserSimi(UserProfileHashMap.get(seFirst.GetEventUserIDs().get(sfit).userid), UserProfileHashMap.get(seMigrate.GetEventUserIDs().get(sefit).userid));
+                        Probr += GetUserSimi(UserProfileHashMap.get(seFirst.GetEventUserIDs().get(sfit).userid),
+                                             UserProfileHashMap.get(seMigrate.GetEventUserIDs().get(sefit).userid));
                     }
                     sefit++;
                 }
@@ -775,22 +757,27 @@ public class EventMigration {
             sfit++;
         }
 
-        Probr /= (seFirstULen* migrateULen);
+
+        int tmp = seFirstULen * migrateULen; // sometimes while debugging ,the result is zero and divide not legal
+        if (0 == tmp){
+            tmp = 1;
+        }
+
+        Probr /= tmp;
         return Probr;
     }
 
 
-
-        /*==============================================
-            return the maximal probability from up1 to up2
-        ================================================*/
+    /*==============================================
+        return the maximal probability from up1 to up2
+    ================================================*/
     float GetUserSimi(UserProfile up1, UserProfile up2) {
         float ret = 0;
         //ret = up1.UserInfluenceDistri[up2.userId];
 
 
-        for (UPInfluDistriEle upidit: up1.UserInfluenceDistri
-             ) {
+        for (UPInfluDistriEle upidit : up1.UserInfluenceDistri
+                ) {
             if ((upidit).userid == up2.userId) {
                 ret = (upidit).userInflu;
                 break;

@@ -74,12 +74,12 @@ public class EventRecomOpti {
         float[] minUserInfluenceDistri = new float[TUNUM];  //= { MAXFLOAT };
         float[] maxUserInfluenceDistri = new float[TUNUM] ;//= { MINFLOAT };
 
-        for (int i =0 ; i< TFIDF_DIM ; i++){
+        for (int i =0 ; i< 1 ; i++){
             minCluster_ConceptTFIDFVec[i] = MAXFLOAT;
             maxCluster_ConceptTFIDFVec[i] = MINFLOAT;
         }
 
-        for (int i =0 ; i< TUNUM ; i++){
+        for (int i =0 ; i< 1 ; i++){
             minUserInfluenceDistri[i] = MAXFLOAT;
             minUserInfluenceDistri[i] = MINFLOAT;
         }
@@ -111,7 +111,7 @@ public class EventRecomOpti {
                     //////////////////////////////////
 
 
-
+                     // all the code lack some defense
                      List<UPInfluDistriEle> upInfluDistriEle = uProfileMap.get(socialEvent.GetEventUserIDs().get(i).userid).UserInfluenceDistri;
 
                     for (UPInfluDistriEle uidp:upInfluDistriEle
@@ -258,7 +258,9 @@ public class EventRecomOpti {
             }
 
 
-            if (FirstProBit != UPEBuckets.size() -1) {
+            //the corresponding cpp condition here would never be invoked ???
+            //if FirstProBit is replaced by upebit, this would be happend
+            if (FirstProBit != UPEBuckets.size() ) {
                 UProfileEventGroupProcessors.get(proToAllocate).setUProfileEventGroup(UPEBuckets.get(FirstProBit));  //allocate the rest bucket for the processor proToAllocate
                 UPEBuckets.remove(FirstProBit);  //remove the bucket
             }
@@ -321,15 +323,16 @@ public class EventRecomOpti {
                     upebit.setUProfileEventGroup(upesit);
                     break;
                 }
+            }
 
-                //overflow the array
-                if (UPEventBuckets.size() == i){
-                    UPEventBucket curEPar = new UPEventBucket();
-                    curEPar.setUProfileEventGroup(upesit);
-                    UPEventBuckets.add(curEPar);
 
-                }
-
+            /////////
+            //overflow the array
+            // that is the above code block never been executed
+            if (UPEventBuckets.size() == i){
+                UPEventBucket curEPar = new UPEventBucket();
+                curEPar.setUProfileEventGroup(upesit);
+                UPEventBuckets.add(curEPar);
             }
 
 
@@ -343,6 +346,8 @@ public class EventRecomOpti {
 
 
     // simple method
+    //test on date 20200224 almost the same _g var . precise
+    //
     public void MapEvent2Vec(List<SocialEvent> UProfileEventSet, LSB lsb,float alpha){
          float[]  _g = new float[lsb.m];
 
@@ -595,7 +600,7 @@ public class EventRecomOpti {
                     }
 
 
-                    if (flag) {
+                    if (!flag) {
                         userlist.add((uit).userid);
                     }
 

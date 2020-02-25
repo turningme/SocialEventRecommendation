@@ -177,14 +177,13 @@ public class SocialEvent implements Event{
                         break;
                     }
 
-                    // if all above failed , then insert new one
-                    if (eventUserIdsFre.size() == i) {
-                        EUserFrePair newUFpair = new EUserFrePair(euit.userid, euit.frequency);
-                        eventUserIdsFre.add(newUFpair);
-                    }
-
                 }
 
+                // if all above failed , then insert new one
+                if (eventUserIdsFre.size() == i) {
+                    EUserFrePair newUFpair = new EUserFrePair(euit.userid, euit.frequency);
+                    eventUserIdsFre.add(newUFpair);
+                }
 
             }
 

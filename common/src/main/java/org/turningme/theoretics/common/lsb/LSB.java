@@ -42,7 +42,7 @@ public class LSB {
     public int			u;								/* log_2 (U/w) */
 
     public float[]		 a_array;
-    public double[] b_array;						/* each lsb-tree requires m hash functions, and each has function
+    public float[] b_array;						/* each lsb-tree requires m hash functions, and each has function
 												   requires a d-dimensional vector a and a 1d value b. so a_array contains
 												   l * m * d values totally and b_array contains l *m values */
 
@@ -340,7 +340,7 @@ public class LSB {
         m = get_m(ratio, w, n, B, d);
 
         a_array = new float[L * m * d];
-        b_array = new double[L * m];
+        b_array = new float[L * m];
 
         acnt = 0;
         bcnt = 0;
@@ -358,7 +358,7 @@ public class LSB {
                     acnt++;
                 }
 
-                b_array[bcnt] =  scanner.nextDouble();
+                b_array[bcnt] =  scanner.nextFloat();
 
                 bcnt++;
 
@@ -520,7 +520,7 @@ public class LSB {
         for (i = 0; i < L * m * d; i ++)
             a_array[i] = new Rand().gaussian(0, 1);
 
-        b_array = new double[L * m];
+        b_array = new float[L * m];
         for (i = 0; i < L * m; i ++)
             b_array[i] = new Rand().new_uniform(0, max_b);
     }

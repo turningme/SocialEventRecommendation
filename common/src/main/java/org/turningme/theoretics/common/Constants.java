@@ -33,7 +33,7 @@ public class Constants {
     public static final int  BUFFERSIZE = 20000;
     public static final int  USERLEN = 100;
     public static final int  MSGLEN = 200;
-    public static final int  MVALUE = 5; //the number of hash functions
+    public static final int  MVALUE = 9; //the number of hash functions , old is 5 , but it is 9 while computing , // TODO: 2020/2/25  
 
     /**
      *

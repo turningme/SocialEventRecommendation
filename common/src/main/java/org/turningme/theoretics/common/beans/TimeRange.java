@@ -5,7 +5,7 @@ package org.turningme.theoretics.common.beans;
  */
 public class TimeRange {
     public float TimeStampCentre;   //time stamp: change date-time into int
-    public float range;  //the uncertainty threshold range \tau with time stamp
+    public float range;  //the uncertainty threshold range \tau with time stamp , should be changed to int type  // TODO: 2020/2/25
 
 
     public TimeRange() {

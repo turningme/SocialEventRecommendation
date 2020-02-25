@@ -2,7 +2,10 @@ package org.turningme.theoretics.common.event;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 import org.turningme.theoretics.common.RecContext;
@@ -30,6 +33,8 @@ public class SocialEventOperation implements Event {
     }
 
     public void PartitionGroupsByTimeSpace(List<SocialMSG> MSGSet, List<MSGSET> outputGroups) {
+        Map<Integer,MSGSET> outputGroupsMap = new LinkedHashMap<>();
+
         float[] minmaxTvalue = new float[2];
         float[] minmaxLatValue = new float[2];
         float[] minmaxLongiValue = new float[2];
@@ -57,7 +62,7 @@ public class SocialEventOperation implements Event {
             if(segL>0)
                 //Lindex = ((int)(*smit).getSpaceRange().lat - (int)minmaxLatValue[0]) % segL;
                 Lindex = ((int)(smit).getSpaceRange().lat - (int)minmaxLatValue[0])/segL;
-            if(segLon == 0)
+            if(segLon != 0)
                 //LongIndex = ((int)(*smit).getSpaceRange().longi - (int)minmaxLongiValue[0]) % segLon;
                 LongIndex = ((int)(smit).getSpaceRange().longi - (int)minmaxLongiValue[0]) / segLon;
 
@@ -82,14 +87,15 @@ public class SocialEventOperation implements Event {
 //               outputGroups.resize(index + 1);
             //////////////////////
 
-            MSGSET tmp = outputGroups.get(index) ;
-            if (tmp == null ){
-                tmp = new MSGSET(new ArrayList<>());
-                outputGroups.set(index,tmp);
-            }
-
-            tmp.getSocialMSGs().add(smit);
+            outputGroupsMap.putIfAbsent(index,new MSGSET(new ArrayList<>()));
+            outputGroupsMap.get(index).getSocialMSGs().add(smit);
         }
+
+        Set<Map.Entry<Integer,MSGSET>> entrys = outputGroupsMap.entrySet();
+        for (Map.Entry<Integer,MSGSET> en:entrys){
+            outputGroups.add(en.getValue());
+        }
+//        outputGroups.addAll(outputGroupsMap.values());
 
         //set time value segment length to 60 minutes
     }
@@ -152,7 +158,7 @@ public class SocialEventOperation implements Event {
                 ) {
             lsb.getHashVector(0, (msit).getConceptTFIDFVec(), _g);		//tableID is also 0
             lsb.getZ(_g, (msit).HashV);
-        }
+            }
 
     }
 
@@ -191,7 +197,7 @@ public class SocialEventOperation implements Event {
 
         //std::list<SocialEvent> outputEventlist;
         System.out.printf("---- ProduceClusterSeeds\n");
-        PartitionGroupsByTimeSpace(HashTagedMSGset, outputGroups);
+        PartitionGroupsByTimeSpace(HashTagedMSGset, outputGroups);//the cpp code is waste too many memory  as most of the items are never used
 
         HashTagedMSGset.clear();
 
@@ -223,8 +229,10 @@ public class SocialEventOperation implements Event {
                     eseed.uploadEventMsg(mp2);
 
                     //remove the at the specified index
-                    outputGroups.get(i).getSocialMSGs().remove(mps[0]);
-                    outputGroups.get(i).getSocialMSGs().remove(mps[1]);
+                    Object t1 = outputGroups.get(i).getSocialMSGs().get(mps[0]);
+                    Object t2 = outputGroups.get(i).getSocialMSGs().get(mps[1]);
+                    outputGroups.get(i).getSocialMSGs().remove(t1);
+                    outputGroups.get(i).getSocialMSGs().remove(t2);
                     eseed.SetTimeRange();
                     eseed.SetSpaceRange();
                     eseed.SetCluster_ConceptTFIDFVec();
@@ -240,7 +248,7 @@ public class SocialEventOperation implements Event {
 
 
                     eseed.uploadEventMsg(mp1);
-                    outputGroups.get(i).getSocialMSGs().remove(mps[0]);
+                    outputGroups.get(i).getSocialMSGs().remove(outputGroups.get(i).getSocialMSGs().get(mps[0]));
                     eseed.SetTimeRange();
                     eseed.SetSpaceRange();
                     eseed.SetCluster_ConceptTFIDFVec();
@@ -253,16 +261,16 @@ public class SocialEventOperation implements Event {
                 }
             }
 
-            System.out.printf("seednum: %d\n", seedclusters.size());
+            System.out.printf("seednum: %d\n", seedclusters.size());// less than c++ code //// TODO: 2020/2/25  checked   MaxSim is largger
 
 
             for (SocialEvent eit:seedclusters
                  ) {
                 ////set virtual features of clusters
-                eit.SetCluster_ConceptTFIDFVec();
+   /*             eit.SetCluster_ConceptTFIDFVec();
                 HashMappingEvent(eit, lsb);
                 eit.SetSpaceRange();
-                eit.SetTimeRange();
+                eit.SetTimeRange();*/
                 /////////////
                 int found = FindHashConflictMSG(eit, outputGroups.get(i), lsb.m);
                 int outputGsize = outputGroups.get(i).getSocialMSGs().size();
@@ -297,7 +305,7 @@ public class SocialEventOperation implements Event {
                         if (mps[0] != 0)
                             mps[0]--;
 
-                        outputGroups.get(i).getSocialMSGs().remove(mps[1]);
+                        outputGroups.get(i).getSocialMSGs().remove(outputGroups.get(i).getSocialMSGs().get(mps[1]));
 
                         (eit).SetTimeRange();
                         (eit).SetSpaceRange();
@@ -476,7 +484,7 @@ public class SocialEventOperation implements Event {
         int len = Group.getSocialMSGs().size();
         for (int i=0; i<len; i++){
             p1 = Group.getSocialMSGs().get(i);
-            for (int j = 0; j < len; j++) {
+            for (int j = i +1; j < len; j++) {
                 p2 = Group.getSocialMSGs().get(j);
                 float curConflict = l2_dist_int((p1).HashV, (p2).HashV, dim);
                 if (curConflict < maxConflict) {

@@ -37,6 +37,9 @@ public class UPEventPartition {
 
     public void setTopicRangeVector(ValueRangePair[] TRV) {
         for (int i = 0; i < TFIDF_DIM; i++) {
+            if ( TopicRangeVector[i]== null){
+                TopicRangeVector[i] = new ValueRangePair();
+            }
             TopicRangeVector[i].minV = TRV[i].minV;
             TopicRangeVector[i].maxV = TRV[i].maxV;
         }
@@ -49,6 +52,10 @@ public class UPEventPartition {
 
     public void setInfluenceRangeVector(ValueRangePair[] IRV) {
         for (int i = 0; i < TUNUM; i++) {
+
+            if ( InfluenceRangeVector[i]== null){
+                InfluenceRangeVector[i] = new ValueRangePair();
+            }
             InfluenceRangeVector[i].minV = IRV[i].minV;
             InfluenceRangeVector[i].maxV = IRV[i].maxV;
         }

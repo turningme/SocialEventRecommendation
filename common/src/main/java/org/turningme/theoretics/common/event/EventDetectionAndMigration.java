@@ -48,7 +48,11 @@ public class EventDetectionAndMigration {
         float alpha = 0.5f;
 
 
-        List<UPEventPartition> uprofileEventGroupSet = new ArrayList<>();
+        List<UPEventPartition> uprofileEventGroupSet = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            uprofileEventGroupSet.add(new UPEventPartition());
+        }
+
         EventRecomOpti eropti = new EventRecomOpti(recCxt);
         eropti.UserProfileDataPartition(userHisEvents, numofGroups, uprofileEventGroupSet, lsb, alpha);
 
@@ -59,7 +63,7 @@ public class EventDetectionAndMigration {
         List<SocialMSG> HashTagedMSGlist = new ArrayList<>(), NonHashTagedMSGlist = new ArrayList<>();
         List<SocialEvent> Eventclusters = new ArrayList<>();
 
-        ////
+        ////hash tag and non hash tag  records count ok
 
 
         int startmsgno = 0;
@@ -77,7 +81,8 @@ public class EventDetectionAndMigration {
         ////
         recCxt.setRecommendation(new EventRecommendation(recCxt));
         List<SocialEvent> IncomingEventSubset = new ArrayList<>();
-        float SimiThreshold = 0.7f;
+//        float SimiThreshold = 0.7f;
+        float SimiThreshold = 0.f;
         for (int i = 0; i < numofGroups; i++) {
             /// too much code not used in the whole code stack
             eropti.IncomingEventSubsetIdentification(Eventclusters, IncomingEventSubset, uprofileEventGroupSet.get(i),
