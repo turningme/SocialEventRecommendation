@@ -31,16 +31,7 @@ object StaticSimilarityJoin {
 
     val rddClusterEvent: RDD[SocialEvent] = spark.sparkContext.parallelize(preHelper.getStaticClusterEvent.toArray(new Array[SocialEvent](0)), 1)
 
-    // preHelper.IncomingEventSubsetIdentification(socialEvent,f,0.0f,0.0f)
 
-    //        rdd.foreach(f => {
-    //          rddClusterEvent.foreach(socialEvent => {
-    //
-    //          })
-    //        })
-
-
-    //IncomingEventSubsetIdentification
     val simRank = rdd.cartesian(rddClusterEvent).filter((e) => {
       preHelper.IncomingEventSubsetIdentification(e._2, e._1, SimiThreshold, alpha).size() > 0
     })
