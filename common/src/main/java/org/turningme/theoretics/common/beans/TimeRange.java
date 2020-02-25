@@ -1,9 +1,11 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by jpliu on 2020/2/23.
  */
-public class TimeRange {
+public class TimeRange  implements Serializable {
     public float TimeStampCentre;   //time stamp: change date-time into int
     public float range;  //the uncertainty threshold range \tau with time stamp , should be changed to int type  // TODO: 2020/2/25
 

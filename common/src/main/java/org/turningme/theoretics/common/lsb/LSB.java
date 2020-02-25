@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,7 +17,7 @@ import org.turningme.theoretics.common.rand.Rand;
 /**
  * Created by jpliu on 2020/2/24.
  */
-public class LSB {
+public class LSB  implements Serializable {
     //--=== on disk ===--
     public int			t;								/* largest coordinate of a dimension */
     public int			d;								/* dimensionality */

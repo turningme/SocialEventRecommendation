@@ -1,9 +1,11 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by jpliu on 2020/2/23.
  */
-public class EventUserSimi {
+public class EventUserSimi  implements Serializable {
     public int userid;
     public float simi;
 

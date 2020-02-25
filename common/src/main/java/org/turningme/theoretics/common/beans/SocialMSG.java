@@ -1,5 +1,6 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import static org.turningme.theoretics.common.Constants.TFIDF_DIM;
 /**
  * Created by jpliu on 2020/2/23.
  */
-public class SocialMSG {
+public class SocialMSG  implements Serializable {
     public int msgID;
     public float[] ConceptTFIDFVec = new float[TFIDF_DIM];
     public TimeRange TR = new TimeRange();

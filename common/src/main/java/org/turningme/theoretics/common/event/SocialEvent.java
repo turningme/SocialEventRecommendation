@@ -1,5 +1,6 @@
 package org.turningme.theoretics.common.event;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import static org.turningme.theoretics.common.Constants.TFIDF_DIM;
 
 
 
-public class SocialEvent implements Event{
+public class SocialEvent implements Event  , Serializable {
 
 
     //float *Cluster_ConceptTFIDFVec;

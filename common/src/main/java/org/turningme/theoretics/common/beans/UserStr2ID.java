@@ -1,9 +1,11 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by jpliu on 2020/2/23.
  */
-public class UserStr2ID {
+public class UserStr2ID  implements Serializable {
     String userIDStr;
     int userId;
 

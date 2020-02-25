@@ -1,5 +1,6 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import org.turningme.theoretics.common.event.SocialEvent;
 /**
  * Created by jpliu on 2020/2/24.
  */
-public class UserProfile {
+public class UserProfile  implements Serializable {
     public int userId;  //the index no of user in user dictionary
     //float UserInfluenceDistri[TUNUM];
     public List<UPInfluDistriEle> UserInfluenceDistri = new ArrayList<>();

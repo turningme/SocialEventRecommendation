@@ -1,6 +1,7 @@
 package org.turningme.theoretics.common.event;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import org.turningme.theoretics.common.lsb.LSB;
 /**
  * Created by jpliu on 2020/2/24.
  */
-public class EventDetectionAndMigration {
+public class EventDetectionAndMigration implements Serializable{
     String userinfluenceFile = "/Users/jpliu/CLionProjects/EventRecoHelper/UserInfluDictfile.txt";
 
 
@@ -109,7 +110,7 @@ public class EventDetectionAndMigration {
      *
      * two containers HashTagedMSGlist and NonHashTagedMSGlist is something returned
      */
-    static void loadMessageSlotForTraining(String FullSlotFileName, List<SocialMSG> HashTagedMSGlist,
+    public static void loadMessageSlotForTraining(String FullSlotFileName, List<SocialMSG> HashTagedMSGlist,
             List<SocialMSG> NonHashTagedMSGlist, int startMSGno ,RecContext rc) {
 
         rc.getEventMigration().loadMessageSlotForTraining(FullSlotFileName, HashTagedMSGlist,NonHashTagedMSGlist,startMSGno);

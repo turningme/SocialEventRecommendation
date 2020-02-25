@@ -30,6 +30,8 @@ public class SocialEventOperation implements Event {
 
     public SocialEventOperation(RecContext recContext) {
         this.recContext = recContext;
+        this.recContext.setSocialEventOperation(this);
+
     }
 
     public void PartitionGroupsByTimeSpace(List<SocialMSG> MSGSet, List<MSGSET> outputGroups) {
@@ -547,7 +549,7 @@ public class SocialEventOperation implements Event {
      /*
      input messages, output Eventclusters
     */
-    void OnlineClustering(List<SocialMSG> HashTagedMSGlist,
+    public void OnlineClustering(List<SocialMSG> HashTagedMSGlist,
             List<SocialMSG> NonHashTagedMSGlist,  List<SocialEvent> Eventclusters, LSB lsb) {
 
         ProduceClusterSeeds(HashTagedMSGlist, Eventclusters,lsb);

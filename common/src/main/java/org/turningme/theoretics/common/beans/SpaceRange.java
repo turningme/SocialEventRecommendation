@@ -1,9 +1,11 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by jpliu on 2020/2/23.
  */
-public class SpaceRange {
+public class SpaceRange  implements Serializable {
     public float lat;
     public float longi;
     public float radius;

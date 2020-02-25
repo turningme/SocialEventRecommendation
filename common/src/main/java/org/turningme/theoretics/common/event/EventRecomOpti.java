@@ -1,5 +1,6 @@
 package org.turningme.theoretics.common.event;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import static org.turningme.theoretics.common.Constants.TUNUM;
 /**
  * Created by jpliu on 2020/2/24.
  */
-public class EventRecomOpti {
+public class EventRecomOpti implements Serializable {
     RecContext recCxt;
 
 
@@ -45,7 +46,7 @@ public class EventRecomOpti {
      * @param lsb
      * @param alpha
      */
-    void UserProfileDataPartition(List<SocialEvent> UProfileEventSet, int NumOfGroups,
+    public void UserProfileDataPartition(List<SocialEvent> UProfileEventSet, int NumOfGroups,
             List<UPEventPartition> UProfileEventGroupSets, LSB lsb, float alpha) {
         MapEvent2Vec(UProfileEventSet,lsb,alpha);
 
@@ -435,7 +436,7 @@ public class EventRecomOpti {
     }
 
 
-    float ComputeUPmax(UPEventPartition UserProfileEventPartition, SocialEvent  IncomingEvent, float alpha)
+    public float ComputeUPmax(UPEventPartition UserProfileEventPartition, SocialEvent  IncomingEvent, float alpha)
     {
         float UPmax = 0;
 
@@ -690,7 +691,7 @@ public class EventRecomOpti {
     }
 
 
-    void EventSimilarityJoin(UPEventPartition UserProfileEventPartion, List<SocialEvent> IncomingEventSubset, float SimiThreshold)
+    public void EventSimilarityJoin(UPEventPartition UserProfileEventPartion, List<SocialEvent> IncomingEventSubset, float SimiThreshold)
     {
         EventRecommendation eventRec = recCxt.getRecommendation();
 
@@ -718,7 +719,7 @@ public class EventRecomOpti {
     }
 
 
-    void UpdateRecUserSimi(SocialEvent  IncomingEvent, SocialEvent  UserProfileEvent, float simiV)
+    public void UpdateRecUserSimi(SocialEvent  IncomingEvent, SocialEvent  UserProfileEvent, float simiV)
     {
         int NU_seit = UserProfileEvent.userlist.size();
         for (int j = 0; j < NU_seit; j++)

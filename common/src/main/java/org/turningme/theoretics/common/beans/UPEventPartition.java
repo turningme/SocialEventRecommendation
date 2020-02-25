@@ -1,5 +1,6 @@
 package org.turningme.theoretics.common.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import static org.turningme.theoretics.common.Constants.TUNUM;
 /**
  * Created by jpliu on 2020/2/24.
  */
-public class UPEventPartition {
+public class UPEventPartition implements Serializable{
     public int userNum; //the number of users in this partition
     public List<UPEventBucket> UProfileEventGroup = new ArrayList<>();
     public ValueRangePair[] TopicRangeVector = new ValueRangePair[TFIDF_DIM];

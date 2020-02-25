@@ -1,12 +1,14 @@
 package org.turningme.theoretics.common.event;
 
+import java.io.Serializable;
+
 import org.turningme.theoretics.common.RecContext;
 
 /**
  * Created by jpliu on 2020/2/25.
  */
 
-public class EventRecommendation {
+public class EventRecommendation implements Serializable{
 
     RecContext recContext;
     float alpha = 0f; //the weight of ESim
@@ -16,9 +18,10 @@ public class EventRecommendation {
 
     public EventRecommendation(RecContext recContext) {
         this.recContext = recContext;
+        this.recContext.setRecommendation(this);
     }
 
-    float GetESim(SocialEvent En, SocialEvent Eu) {
+    public float GetESim(SocialEvent En, SocialEvent Eu) {
         EventMigration emig = recContext.getEventMigration();
         float probr=emig.EventMigrationProb(En, Eu);
         if (probr > 0)

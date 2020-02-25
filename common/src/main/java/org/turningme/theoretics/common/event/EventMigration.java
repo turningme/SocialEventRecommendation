@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +31,19 @@ import static org.turningme.theoretics.common.Constants.TIMERADIUST;
 
 
 // load user data naive ?
-public class EventMigration {
+public class EventMigration implements Serializable{
 
     Map<Integer, UserProfile> UserProfileHashMap = new HashMap<>();
 
     RecContext recContext;
+
+    public Map<Integer, UserProfile> getUserProfileHashMap() {
+        return UserProfileHashMap;
+    }
+
+    public void setUserProfileHashMap(Map<Integer, UserProfile> userProfileHashMap) {
+        UserProfileHashMap = userProfileHashMap;
+    }
 
     public EventMigration() {
     }
