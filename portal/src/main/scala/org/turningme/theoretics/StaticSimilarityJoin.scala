@@ -9,6 +9,8 @@ import org.turningme.theoretics.common.event.SocialEvent
 
 /**
   * Created by jpliu on 2020/2/25.
+  * This is for experiment testing , incoming messages is mocked by static files
+  * In fact . read file streaming is easy , but hard to test for running time and some overhead during spark streaming mechanism operating
   */
 object StaticSimilarityJoin {
   val LOG: Logger = LoggerFactory.getLogger(StaticSimilarityJoin.getClass);
