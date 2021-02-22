@@ -89,7 +89,7 @@ object RddDemo {
     //with other transformations
     // it is a cartesian and cost much
     rdd1.filter(f => !"".equals(f))
-      .cartesian(rdd2).map(_).count()
+      .cartesian(rdd2).map(x=>x).count()
 
 
     //use broad cast , make that userPartition is placed a copy on each machine only once, and no need to shuffle for cartesian reason
