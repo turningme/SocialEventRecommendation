@@ -16,19 +16,19 @@ import static org.turningme.theoretics.common.Constants.TFIDF_DIM;
  */
 public class SubEvent implements Serializable {
 
-    private int retweetedStatus;
+    public int retweetedStatus;
     public TimeRange Cluster_TR = new TimeRange();
     public SpaceRange Cluster_SR = new SpaceRange();
 
     public ArrayList<SpaceRange> msgSRset=new ArrayList<>();
     public ArrayList<TimeRange> msgTRset=new ArrayList<>();
 
-    private List<Float> Cluster_ConceptTFIDFVec = new ArrayList<>();
+    public List<Float> Cluster_ConceptTFIDFVec = new ArrayList<>();
     public List<EUserFrePair> eventUserIdsFre = new ArrayList<>();
-    private List<SocialMSG> EventMSG=new ArrayList<>();
+    public List<SocialMSG> EventMSG=new ArrayList<>();
 
-    private int eventno;
-    private int migEno;  //this subevent eventno is relevant to migEno based on similarity or migration
+    public int eventno;
+    public int migEno;  //this subevent eventno is relevant to migEno based on similarity or migration
 
     public List<Integer> EHashV = new ArrayList<>(); //leave it for hash-based clustering.
     public int EventHashV; //leave it for hash-based data partition for parallel processing over spark.
@@ -40,24 +40,24 @@ public class SubEvent implements Serializable {
     public int eventCluster; //for checking if the current subEvent is in groudtruth event
     public float HistEventSimilarity; //for history events similarity precomputation for fast recommendation
 
-    void SetEventNo(int eno) {
+    public void SetEventNo(int eno) {
         eventno = eno;
     }
 
-    void addConceptTFIDFVec(float vec) {
+    public void addConceptTFIDFVec(float vec) {
         Cluster_ConceptTFIDFVec.add(vec);
     }
 
-    void setSpaceRange(SpaceRange sr) {
+    public void setSpaceRange(SpaceRange sr) {
         Cluster_SR.lat = sr.lat;
         Cluster_SR.longi = sr.longi;
         Cluster_SR.radius = sr.radius;
     }
-    void setTimeRange(TimeRange tr) {
+    public void setTimeRange(TimeRange tr) {
         Cluster_TR.TimeStampCentre = tr.TimeStampCentre;
         Cluster_TR.range = tr.range;
     }
-    void setEventUserIDs(List<EUserFrePair> euidlist) {
+    public void setEventUserIDs(List<EUserFrePair> euidlist) {
         eventUserIdsFre.addAll(euidlist);
     }
     public int GetEventNo() {
@@ -80,7 +80,7 @@ public class SubEvent implements Serializable {
     }
 
 
-    void EventReset() {
+    public void EventReset() {
         int TFIDF_DIM=new parameters().TFIDF_DIM;
         for (int i=0; i<TFIDF_DIM; i++){
             Cluster_ConceptTFIDFVec.add(0f);
@@ -101,13 +101,13 @@ public class SubEvent implements Serializable {
         EventHashV=0;
     }
 
-    void cleansubEvent() {
+    public void cleansubEvent() {
         EventMSG.clear();
         HashtagList.clear();
         eventUserIdsFre.clear();
     }
 
-    int SetEventUserIDs(){
+    public int SetEventUserIDs(){
         int usernumber = 0;
         for(SocialMSG smgit:EventMSG) {
             List<EUserFrePair> euit=smgit.getEventUserIDsFre();
@@ -131,7 +131,7 @@ public class SubEvent implements Serializable {
         return eventUserIdsFre.size();
     }
 
-    void setConceptTFIDFVec(float[] vec) {
+    public void setConceptTFIDFVec(float[] vec) {
 //        System.out.println(vec.length);
 
         for (int i = 0; i < vec.length; i++) {
@@ -139,7 +139,7 @@ public class SubEvent implements Serializable {
         }
     }
 
-    void SetCluster_ConceptTFIDFVec()
+    public void SetCluster_ConceptTFIDFVec()
     {
         int TFIDF_DIM=new parameters().TFIDF_DIM;
         for (int i = 0; i < TFIDF_DIM; i++) {
@@ -158,7 +158,7 @@ public class SubEvent implements Serializable {
         }
     }
 
-    void SetTimeRange() {
+    public void SetTimeRange() {
         float MAXFLOAT=new parameters().MAXFLOAT;
         float minT = MAXFLOAT;
         float TIMERADIUST=new parameters().TIMERADIUST;
@@ -178,13 +178,13 @@ public class SubEvent implements Serializable {
         //Cluster_TR.range = (maxT - minT) / 2;
         Cluster_TR.range = TIMERADIUST; //fix the time range
     }
-    void SetmigEventNo(int eno) {
+    public void SetmigEventNo(int eno) {
         migEno = eno;
     }
     public List<EUserFrePair> GetEventUserIDs() {
         return eventUserIdsFre;
     }
-    float EventSimi(SubEvent otherSubEvent) {
+    public float EventSimi(SubEvent otherSubEvent) {
         float simi = 1;
         //SocialMSG thisMSG(retweetedStatus, Cluster_ConceptTFIDFVec, Cluster_TR, Cluster_SR, eventUserIdsFre);
         //SocialMSG otherMSG(otherSubEvent.retweetedStatus, otherSubEvent.Cluster_ConceptTFIDFVec, otherSubEvent.Cluster_TR, otherSubEvent.Cluster_SR, otherSubEvent.eventUserIdsFre);
@@ -194,7 +194,7 @@ public class SubEvent implements Serializable {
         return simi;
     }
 
-    float GetGlobalSimilarity(SubEvent sevt)
+    public float GetGlobalSimilarity(SubEvent sevt)
     {
         float Gsim = 0;
 
@@ -228,7 +228,7 @@ public class SubEvent implements Serializable {
         return Gsim;
     }
 
-    float GetConceptSimilarity(SubEvent sevt) {
+    public float GetConceptSimilarity(SubEvent sevt) {
         float simi = 0;
         for (int i = 0; i < TFIDF_DIM; i++) {
             simi += sevt.Cluster_ConceptTFIDFVec.get(i) * Cluster_ConceptTFIDFVec.get(i);
@@ -254,7 +254,7 @@ public class SubEvent implements Serializable {
         return Tsim;
     }
 
-    float getTimeDiff(TimeRange thisTR, TimeRange sevtR) {
+    public float getTimeDiff(TimeRange thisTR, TimeRange sevtR) {
         float Tsim=0;
         //for tau=0
         if (TIMERADIUST == 0)
@@ -285,7 +285,7 @@ public class SubEvent implements Serializable {
         return Tsim;
     }
 
-    float GetSpaceSimilarity(SubEvent sevt) {
+    public float GetSpaceSimilarity(SubEvent sevt) {
         float Ssim;
         double GreatCircleDist = get_distance(this.Cluster_SR.lat, this.Cluster_SR.longi, sevt.Cluster_SR.lat, sevt.Cluster_SR.longi);
         //get the Hausdorff distance
@@ -299,7 +299,7 @@ public class SubEvent implements Serializable {
         return Ssim;
     }
 
-    double get_distance(double lat1, double lng1, double lat2, double lng2)
+    public double get_distance(double lat1, double lng1, double lat2, double lng2)
     {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
@@ -311,7 +311,7 @@ public class SubEvent implements Serializable {
         return s;
     }
 
-    double rad(double d) {
+    public double rad(double d) {
         return d * PI / 180.0;
     }
 

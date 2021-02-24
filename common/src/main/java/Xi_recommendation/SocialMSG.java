@@ -1,12 +1,13 @@
 package Xi_recommendation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author helen ding on 26/09/2020.
  */
-public class SocialMSG {
+public class SocialMSG implements Serializable {
 
     /**
      * @author Xi chen on 27/09/2020
