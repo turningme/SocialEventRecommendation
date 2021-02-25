@@ -84,6 +84,7 @@ object ContinuousEventRecommendation {
         if (!filename.contains("DS")) {
           //          printf(filename.indexOf("DS").toString)
 
+          //no valid using , plz have a look at this reader
           val br = new BufferedReader(new FileReader(path + filename)) //creates a buffering character input stream
           Eventclusters.clear()
           migrateEvent.loadMigrationEventDetectResultSummary(path + filename, Eventclusters)

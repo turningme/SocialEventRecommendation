@@ -91,8 +91,9 @@ public class EventRecommendation {
             //float overallsim = GetESim(En, UPEventList[(*eit).GetEventNo()]);
             //use pre stored similarity
             float overallsim = UPEventList.get((eit).GetEventNo()).HistEventSimilarity;
-            if (overallsim > ESim)
+            if (overallsim > ESim){
                 ESim = overallsim;
+            }
         }
         return ESim;
     }

@@ -44,6 +44,8 @@ public class SubEvent implements Serializable {
         eventno = eno;
     }
 
+
+
     public void addConceptTFIDFVec(float vec) {
         Cluster_ConceptTFIDFVec.add(vec);
     }
