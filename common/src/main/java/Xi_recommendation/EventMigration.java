@@ -497,7 +497,29 @@ public class EventMigration {
             EUserFrePair sfit = seFirst.GetEventUserIDs().get(i);
             for (int j = 0; j < seMigrate.GetEventUserIDs().size(); j++) {
                 EUserFrePair sefit = seMigrate.GetEventUserIDs().get(j);
-                Probr += GetUserSimi(UserProfileHashMap.get(sefit.userid), UserProfileHashMap.get(sefit.userid));
+                Probr += GetUserSimi(UserProfileHashMap.get(sefit.userid), UserProfileHashMap.get(sfit.userid));
+            }
+        }
+
+        int lenTimes = seFirstULen * migrateULen;
+        if (lenTimes == 0)
+            Probr = 0;
+        else
+            Probr /= (seFirstULen * migrateULen);
+        return Probr;
+    }
+
+    public static float EventMigrationProbV2(SubEvent seFirst, SubEvent seMigrate, Map<Long,UserProfile> UserProfileHashMap) {
+        float Probr = 0; //if seMigrate is the migration of social event seFirst, then ret=1, otherwise ret=0;
+
+        int seFirstULen = seFirst.GetEventUserIDs().size();
+        int migrateULen = seMigrate.GetEventUserIDs().size();
+
+        for (int i = 0; i < seFirst.GetEventUserIDs().size(); i++) {
+            EUserFrePair sfit = seFirst.GetEventUserIDs().get(i);
+            for (int j = 0; j < seMigrate.GetEventUserIDs().size(); j++) {
+                EUserFrePair sefit = seMigrate.GetEventUserIDs().get(j);
+                Probr += GetUserSimi(UserProfileHashMap.get(sefit.userid), UserProfileHashMap.get(sfit.userid));
             }
         }
 

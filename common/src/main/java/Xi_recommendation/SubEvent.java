@@ -15,6 +15,7 @@ import static org.turningme.theoretics.common.Constants.TFIDF_DIM;
  * @author helen ding on 26/09/2020.
  */
 public class SubEvent implements Serializable {
+    private boolean flag = false;
 
     public int retweetedStatus;
     public TimeRange Cluster_TR = new TimeRange();
@@ -352,4 +353,11 @@ public class SubEvent implements Serializable {
     }
 
 
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
 }

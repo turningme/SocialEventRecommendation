@@ -1,8 +1,9 @@
 package Xi_recommendation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class parameters {
+public class parameters implements Serializable {
     float ALPHA=0.4f;
     int MAXEVENTNUM=20000; //20  //The maximal number of incoming events in a time slot
     int KUNUM=100;

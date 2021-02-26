@@ -1,12 +1,14 @@
 package Xi_recommendation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
 *@authorXi Chen 02-Oct-2020
  */
 
-public class EventRecommendation {
+public class EventRecommendation  implements Serializable {
 
     parameters para=new parameters();
 
@@ -33,7 +35,7 @@ public class EventRecommendation {
 //    public EventRecommendation(){}
 
 
-    public class RecItem {  //remember: recommend a given item to users, USERID should be output
+    public class RecItem implements Serializable{  //remember: recommend a given item to users, USERID should be output
         public int UserID;
         public float simi;
     }
@@ -59,6 +61,17 @@ public class EventRecommendation {
     public float GetESim(SubEvent En, SubEvent Eu, ArrayList<UserProfile> UserProfileHashMap){
         EventMigration emig=new EventMigration();
         float probr=EventMigration.EventMigrationProb(En, Eu, UserProfileHashMap);
+        if (probr > 0)
+            //if(probr==1)
+            System.out.println("probr=%f\t"+ probr+ "EventID=%d\t"+ En.GetEventNo()+" UserEventID=%d\n"+ Eu.GetEventNo());
+        float Sim = En.EventSimi(Eu);
+        float overallsim = (1 - alpha)* Sim + alpha *probr;
+        return overallsim;
+    };
+
+    public float GetESimV2(SubEvent En, SubEvent Eu, Map<Long,UserProfile> UserProfileHashMap){
+        EventMigration emig=new EventMigration();
+        float probr=EventMigration.EventMigrationProbV2(En, Eu, UserProfileHashMap);
         if (probr > 0)
             //if(probr==1)
             System.out.println("probr=%f\t"+ probr+ "EventID=%d\t"+ En.GetEventNo()+" UserEventID=%d\n"+ Eu.GetEventNo());
@@ -94,6 +107,29 @@ public class EventRecommendation {
             if (overallsim > ESim){
                 ESim = overallsim;
             }
+        }
+        return ESim;
+    }
+
+    public float GetESimUserV2(SubEvent En, UserProfile up,SubEvent HistoryEvent) {
+        float ESim = 0;
+
+        for (SubEvent eit : up.UserInterestEvents) {
+            //float overallsim = GetESim(En, (*eit));
+            //ignore the events in the current time slot
+            if (eit.GetEventNo() > curEventNum) {
+                continue;
+            }
+            //=================================
+            //float overallsim = GetESim(En, UPEventList[(*eit).GetEventNo()]);
+            //use pre stored similarity
+            if (HistoryEvent.GetEventNo() == eit.GetEventNo()){
+                float overallsim = HistoryEvent.HistEventSimilarity;
+                if (overallsim > ESim){
+                    ESim = overallsim;
+                }
+            }
+
         }
         return ESim;
     }
