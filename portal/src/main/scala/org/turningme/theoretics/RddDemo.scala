@@ -8,7 +8,7 @@ import org.turningme.theoretics.api.Utils
   */
 object RddDemo {
   def main(args: Array[String]): Unit ={
-    loadLocalFile()
+    test2()
   }
 
 
@@ -33,6 +33,21 @@ object RddDemo {
     }).collect().foreach(println)
   }
 
+
+  def test2(): Unit ={
+    val words = Array("a","b","v")
+    val conf = new SparkConf()
+      .set("spark.driver.bindAddress","127.0.0.1")
+      .setAppName("tet").setMaster("local")
+
+    val sc = new SparkContext(conf)
+    val rdd = sc.parallelize(words)
+    val rdd2 = sc.parallelize(words)
+    for(xx <- rdd.union(rdd2)){
+      println(xx)
+    }
+
+  }
 
   /**
     * describe how to load local file / hdfs/s3 , utilizing the core spark rdd api

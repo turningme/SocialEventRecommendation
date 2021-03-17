@@ -2,20 +2,19 @@ package org.turningme.theoretics
 
 import java.util
 
-import org.apache.hadoop.io.LongWritable
-import org.apache.spark.sql.SparkSession
-import org.turningme.theoretics.api.{IncomingSubEventInputFormat, RecommendResult, SubEventInputFormat, UserProfileInputFormat, UserProfileInputFormatV2}
 import Xi_recommendation._
+import org.apache.hadoop.io.LongWritable
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.turningme.theoretics.ContinuousEventRecommendation.{UserProfileHashMap, coupling}
+import org.apache.spark.sql.SparkSession
+import org.turningme.theoretics.api._
 
 import scala.util.control.Breaks.break
 
 /**
   * @Author turningme
   */
-object ContinuousEventRecommendationModified {
+object ContinuousEventRecommendationModifiedV2 {
 
   val SimiThreshold = 0;
   var ALPHA = 0.4f
@@ -129,135 +128,30 @@ object ContinuousEventRecommendationModified {
     val eventRec = new EventRecommendation(ALPHA, rddSubEvents.count().toInt)
 
 
-    // I am wrong , the following is not the iterative compuation , block these codes
-    /*val cartesianRdd = incomingEventsRdd.map(_._2).cartesian(rddSubEventsUpdated.map(_._2))
+    //new feature , user event partition
+    val userPartitionFile = ""
+    val rddUserPartition = spark.sparkContext.hadoopFile(userlist, classOf[UserPartitionInputFormat], classOf[LongWritable], classOf[UPEventPartition], 1)
+      .map(f=>f._2)
 
-    val HistEventSimilarityUpdatedRdd = cartesianRdd.map(f=>{
-      (f._2.eventno,(f._2,f._1))
-    }).reduceByKey((e1,e2)=>{
-      if (e1._1.isFlag){ // e1._1 is the accumulative, e2._2 is the new one
-         val HistEventSimilarity = eventRec.GetESimV2(e2._2, e1._1, UserProfileHashMapBroadcastVar.value)
-         e1._1.HistEventSimilarity = HistEventSimilarity
-        (e1._1,e2._2)
-      }else{// e2._1 is the accumulative,e1._2 is the new one
-        e2._1.setFlag(true)
-        val HistEventSimilarity = eventRec.GetESimV2(e1._2,e2._1, UserProfileHashMapBroadcastVar.value)
-        e1._1.HistEventSimilarity = HistEventSimilarity
-        (e2._1,e1._2)
-      }
-    }).map(_._1)*/
+    val SimiThreshold = 0.1.toFloat
 
+    //incoming events for user recommendation , it is from Eventclusters collection
+    val rddIncomingEventSubset = incomingEventsRdd.map(f=>f._2).cartesian(rddUserPartition)
+      .filter(ff=>{
+        val upmax = EventRecomOpti.ComputeUPmax(ff._2, ff._1, ALPHA, Utils.fromMap(UserProfileHashMapBroadcastVar.value))
+        upmax >= SimiThreshold
+      }).map(e=>e._1)
 
-    val minIncomingEventNo = incomingEventsRdd.map(_._1).min()
-    val maxIncomingEventNo = incomingEventsRdd.map(_._1).max()
-    println(s"minIncomingEventNo = $minIncomingEventNo and maxIncomingEventNo = $maxIncomingEventNo")
-
-    var rddSubEventsUpdatedValues = rddSubEventsUpdated.map(_._2)
-    var recommendResultRddMerge = sc.emptyRDD.asInstanceOf[RDD[RecommendResult]]
-    for (index <- minIncomingEventNo to maxIncomingEventNo) {
-      val HistEventSimilarityUpdatedRddPair = incomingEventsRdd.filter(_._1 == index).map(_._2).cartesian(rddSubEventsUpdatedValues)
-        .map(f => {
-          val HistEventSimilarity = eventRec.GetESimV2(f._1, f._2, UserProfileHashMapBroadcastVar.value)
-          f._2.HistEventSimilarity = HistEventSimilarity
-          f
-        })
-
-      rddSubEventsUpdatedValues = HistEventSimilarityUpdatedRddPair.map(_._2)
-
-      val recommendResultRdd = HistEventSimilarityUpdatedRddPair.map(f => {
-        var SimEuser = 0.0f
-        var rit = 0
-        val topKUsers = new util.ArrayList[RecItem]
-
-        val iter =  UserProfileHashMapBroadcastVar.value.values().iterator()
-        while(iter.hasNext){
-          val userProfile = iter.next()
-          if (coupling != 0) SimEuser = eventRec.GetESimUserV2(f._1, userProfile, f._2)
-          if (!(SimEuser < 0.1 || (topKUsers.size == KUNUM && SimEuser < topKUsers.get(topKUsers.size - 1).simi))) {
-            //              continue
-            val item = new RecItem()
-
-            item.UserID = f._1.GetEventNo() //the ith user
-            item.simi = SimEuser
-            //insert item into topKUsers;
-            var endPos = topKUsers.size
-            if (endPos > 0) endPos -= 1
-            var startPos = 0
-
-            while (endPos - startPos > 0) {
-              val midPos = (endPos + startPos) / 2
-              var flagEnd = 0
-              if (midPos == startPos) flagEnd = 1
-
-              if (topKUsers.get(midPos).simi > item.simi) startPos = midPos
-              else if (topKUsers.get(midPos).simi < item.simi)
-                endPos = midPos
-              if (flagEnd != 0) break
-            }
-
-            rit = 0 + endPos
-            topKUsers.set(rit, item)
-            if (topKUsers.size > KUNUM) topKUsers.remove(0 + KUNUM - 1)
-          }
-
-
-        }
-
-       /* UserProfileHashMapBroadcastVar.value.values().stream().forEach(userProfile => {
-          if (coupling != 0) SimEuser = eventRec.GetESimUserV2(f._1, userProfile, f._2)
-          if (!(SimEuser < 0.1 || (topKUsers.size == KUNUM && SimEuser < topKUsers.get(topKUsers.size - 1).simi))) {
-            //              continue
-            val item = new RecItem()
-
-            item.UserID = f._1.GetEventNo() //the ith user
-            item.simi = SimEuser
-            //insert item into topKUsers;
-            var endPos = topKUsers.size
-            if (endPos > 0) endPos -= 1
-            var startPos = 0
-
-            while (endPos - startPos > 0) {
-              val midPos = (endPos + startPos) / 2
-              var flagEnd = 0
-              if (midPos == startPos) flagEnd = 1
-
-              if (topKUsers.get(midPos).simi > item.simi) startPos = midPos
-              else if (topKUsers.get(midPos).simi < item.simi)
-                endPos = midPos
-              if (flagEnd != 0) break
-            }
-
-            rit = 0 + endPos
-            topKUsers.set(rit, item)
-            if (topKUsers.size > KUNUM) topKUsers.remove(0 + KUNUM - 1)
-          }
-
-
-        })*/
-        val rr = new RecommendResult
-        rr.append("<clusterid> " + f._1.GetEventNo().toString + " </clusterid>\n")
-        rit = 0
-        printf(topKUsers.size().toString)
-        while (rit != topKUsers.size()) {
-          rr.append("<recitem>\t" + topKUsers.get(rit).UserID.toString + "\t" + topKUsers.get(rit).simi.toString + "\t" + UserProfileHashMap.get(topKUsers.get(rit).UserID).userOId.toString + "\t</recitem>\n") //(*rit).timeslotFile);
-          rit += 1
-        }
-        rr
+    val rddIncomingEventSubsetResult = rddIncomingEventSubset.cartesian(rddUserPartition)
+      .map(ee => {
+        EventRecomOpti.EventSimilarityJoin(ee._2,ee._1, SimiThreshold,eventRec,Utils.fromMap(UserProfileHashMapBroadcastVar.value))
+        ee._1
       })
 
-      recommendResultRddMerge = recommendResultRddMerge.union(recommendResultRdd)
 
-    }
+    //output recommend information
+    rddIncomingEventSubsetResult.map(ele => Utils.collectionRecommendInfo(ele)).foreach(println)
 
-    val resCnt = recommendResultRddMerge.count()
-    println(s"recommendResultRdd count =  $resCnt")
-    recommendResultRddMerge.foreach(println)
-
-
-    /*for(xx <- recommendResultRddMerge){
-      println(xx)
-    }*/
-    //Array.tabulate()
   }
 
 

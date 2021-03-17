@@ -360,4 +360,16 @@ public class SubEvent implements Serializable {
     public void setFlag(boolean flag) {
         this.flag = flag;
     }
+
+    public float[] GetCluster_ConceptTFIDFVec(){
+        float[] tfidf=new float[Cluster_ConceptTFIDFVec.size()];
+        for(int i=0;i<Cluster_ConceptTFIDFVec.size();i++){
+            tfidf[i]=Cluster_ConceptTFIDFVec.get(i);
+        }
+        return tfidf;
+    }
+
+    public void SetEventUserIDs_Vec(ArrayList<Integer> userlist) {
+
+    }
 }

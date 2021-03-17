@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+//import static cern.jet.math.Functions.sqrt;
+import static java.lang.Math.sqrt;
+
 /**
  * @author helen ding on 26/09/2020.
  */
@@ -19,7 +22,7 @@ public class SocialMSG implements Serializable {
     SpaceRange SR=new SpaceRange();
     parameters para=new parameters();
 
-    int TFIDF_DIM=para.TFIDF_DIM;
+    int TFIDF_DIM= parameters.TFIDF_DIM;
 
     float ConceptTFIDFVec[]=new float[TFIDF_DIM];
 
@@ -27,6 +30,8 @@ public class SocialMSG implements Serializable {
     ArrayList<String> HashtagList = new ArrayList();
     List<EUserFrePair> EventUserIDsFre=new ArrayList<>();
 
+    public SocialMSG() {
+    }
     void setMSGID(long mid) {
         msgID = mid;
     }
@@ -76,4 +81,26 @@ public class SocialMSG implements Serializable {
 //    getTimeRange(){}
     TimeRange getTimeRange() { return TR;}
 
+    public float GetConceptVectorSimilarity(float[] con1, float[] con2) {
+        float simi = 0;
+        for (int i = 0; i < TFIDF_DIM; i++) {
+            simi += con1[i] * con2[i];
+        }
+        float thisModule = 0;
+        for (int i = 0; i < TFIDF_DIM; i++) {
+            thisModule += con1[i] * con1[i];
+        }
+        thisModule = (float) sqrt(thisModule);
+
+        float smsgModule = 0;
+        for (int i = 0; i < TFIDF_DIM; i++) {
+            smsgModule += con2[i] * con2[i];
+        }
+        smsgModule = (float) sqrt(smsgModule);
+
+        simi /= thisModule;
+        simi /= smsgModule;
+
+        return simi;
+    }
 }

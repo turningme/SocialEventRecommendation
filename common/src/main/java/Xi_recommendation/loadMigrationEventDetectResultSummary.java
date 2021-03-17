@@ -1,7 +1,5 @@
 package Xi_recommendation;
 
-import it.unimi.dsi.fastutil.Hash;
-
 import java.io.*;
 import java.util.ArrayList;
 
@@ -9,7 +7,8 @@ import static org.turningme.theoretics.common.Constants.MVALUE;
 import static org.turningme.theoretics.common.Constants.TFIDF_DIM;
 
 public class loadMigrationEventDetectResultSummary {
-    public int loadMigrationEventDetectResultSummary(String filename, ArrayList<SubEvent> eventClusters) throws IOException {
+
+    public static int loadMigrationEventDetectResultSummary(String filename, ArrayList<SubEvent> eventClusters) throws IOException {
         int ret = 0;
 
         float[] vec = new float[TFIDF_DIM];

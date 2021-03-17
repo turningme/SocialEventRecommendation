@@ -12,9 +12,9 @@ public class EventRecommendation  implements Serializable {
 
     parameters para=new parameters();
 
-    private int MAXEVENTNUM=para.MAXEVENTNUM; //20  //The maximal number of incoming events in a time slot
-    private double ALPHA=para.ALPHA;
-    private int KUNUM=para.KUNUM;
+    private int MAXEVENTNUM= parameters.MAXEVENTNUM; //20  //The maximal number of incoming events in a time slot
+    private double ALPHA= parameters.ALPHA;
+    private int KUNUM= parameters.KUNUM;
 
 
     public ArrayList<SubEvent> UPEventList=new ArrayList<>();
