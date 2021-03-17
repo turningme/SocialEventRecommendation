@@ -34,6 +34,9 @@ public class UPEventPartition implements Serializable {
 
     public void setTopicRangeVector(ValueRangePair[] TRV) {
         for (int i = 0; i < parameters.TFIDF_DIM; i++) {
+            if (TopicRangeVector[i] == null){
+                TopicRangeVector[i] = new ValueRangePair();
+            }
             TopicRangeVector[i].minV = TRV[i].minV;
             TopicRangeVector[i].maxV = TRV[i].maxV;
         }
@@ -45,6 +48,9 @@ public class UPEventPartition implements Serializable {
 
     public  void setSpaceRangePair(ValueRangePair[] TRV) {
         for (int i = 0; i < 2; i++) {
+            if (SpaceRangePair[i] == null){
+                SpaceRangePair[i] = new ValueRangePair();
+            }
             SpaceRangePair[i].minV = TRV[i].minV;
             SpaceRangePair[i].maxV = TRV[i].maxV;
         }
@@ -55,6 +61,9 @@ public class UPEventPartition implements Serializable {
     }
 
     public  void setTimeRangePair(ValueRangePair TRV) {
+        if (TimeRangePair == null){
+            TimeRangePair = new ValueRangePair();
+        }
         TimeRangePair.minV = TRV.minV;
         TimeRangePair.maxV = TRV.maxV;
     }

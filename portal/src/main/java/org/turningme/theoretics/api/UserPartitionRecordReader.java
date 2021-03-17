@@ -49,7 +49,8 @@ public class UserPartitionRecordReader implements RecordReader<LongWritable, UPE
             }
             line = this.currentValueHolder.toString();
             if (line.contains("<groupid>")) {
-                UPEventPartition group = new UPEventPartition();
+                userProfile.reset();
+                UPEventPartition group = userProfile;
                 ArrayList<SubEvent> subevents = new ArrayList<SubEvent>();
 
                 int groupid = Integer.parseInt(line.substring(line.indexOf("<groupid>") + 9, line.indexOf("</groupid>")).trim());
@@ -87,9 +88,11 @@ public class UserPartitionRecordReader implements RecordReader<LongWritable, UPE
                 if (success) {
                     line = this.currentValueHolder.toString();
                     ValueRangePair[] spacerangevec = new ValueRangePair[2];
-                    String[] spacereangepair = line.substring(line.indexOf("<SpaceRangePair>") + 16, line.indexOf("</SpaceRangePair>")).trim().split(
-                            "\t");
+                    String[] spacereangepair = line.substring(line.indexOf("<SpaceRangePair>") + 16, line.indexOf("</SpaceRangePair>")).trim().split("\t");
                     for (int i = 0; i < 2; i++) {
+                        if (spacerangevec[i] == null){
+                            spacerangevec[i] = new ValueRangePair();
+                        }
                         spacerangevec[i].minV = Float.parseFloat(spacereangepair[i].split(" ")[0]);
                         spacerangevec[i].maxV = Float.parseFloat(spacereangepair[i].split(" ")[1]);
                     }
@@ -100,8 +103,7 @@ public class UserPartitionRecordReader implements RecordReader<LongWritable, UPE
                 success = this.lineRecordReader.next(this.currentKeyHolder, this.currentValueHolder);
                 if (success) {
                     line = this.currentValueHolder.toString();
-                    String[] infvecs = line.substring(line.indexOf("<influenceRangeVec>") + 19, line.indexOf("</influenceRangeVec>")).trim().split(
-                            "\t");
+                    String[] infvecs = line.substring(line.indexOf("<influenceRangeVec>") + 19, line.indexOf("</influenceRangeVec>")).trim().split("\t");
                     ArrayList<UserValueRangePair> infvec = new ArrayList<>();
 
                     for (String s : tr) {

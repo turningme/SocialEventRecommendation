@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 
 public class EventMigrationPartation {
+    public EventMigrationPartation() {
+    }
 
     public void EventMigrationPartation(String MTimeSlotFilist, String path, String outpath,
                                         String userlist, String userProfilePath,
@@ -124,6 +126,9 @@ public class EventMigrationPartation {
                 ValueRangePair[] spacerangevec=new ValueRangePair[2];
                 String[] spacereangepair=line.substring(line.indexOf("<SpaceRangePair>")+16,line.indexOf("</SpaceRangePair>")).trim().split("\t");
                 for(int i=0;i<2;i++) {
+                    if (spacerangevec[i] == null){
+                        spacerangevec[i] = new ValueRangePair();
+                    }
                     spacerangevec[i].minV = Float.parseFloat(spacereangepair[i].split(" ")[0]);
                     spacerangevec[i].maxV = Float.parseFloat(spacereangepair[i].split(" ")[1]);
                 }
@@ -162,6 +167,14 @@ public class EventMigrationPartation {
             }
         }
         f_open.close();
+    }
+
+    public static void main(String[] args){
+        try {
+            new EventMigrationPartation().LoadingUserPartitionFile("/Users/jpliu/Downloads/Nepal_UserHistUPPartion(Feb28)/statuses.log.2015-04-26-01.UPP",new ArrayList<>());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static SubEvent parseSubEvent(BufferedReader f_open, String line) throws IOException {

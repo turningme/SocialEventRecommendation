@@ -129,9 +129,12 @@ object ContinuousEventRecommendationModifiedV2 {
 
 
     //new feature , user event partition
-    val userPartitionFile = ""
-    val rddUserPartition = spark.sparkContext.hadoopFile(userlist, classOf[UserPartitionInputFormat], classOf[LongWritable], classOf[UPEventPartition], 1)
+    val userPartitionFile = "/Users/jpliu/Downloads/Nepal_UserHistUPPartion(Feb28)/statuses.log.2015-04-26-01.UPP"
+    val rddUserPartition = spark.sparkContext.hadoopFile(userPartitionFile, classOf[UserPartitionInputFormat], classOf[LongWritable], classOf[UPEventPartition], 1)
       .map(f=>f._2)
+
+    val cntPartition = rddUserPartition.count()
+    println(s"cntPartition ---- ${cntPartition}")
 
     val SimiThreshold = 0.1.toFloat
 
